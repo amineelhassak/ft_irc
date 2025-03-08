@@ -1,42 +1,34 @@
-SRCS = $(wildcard *.cpp)
-HPP = $(wildcard *.hpp)
+NAME = ircserv
+
+SRCS = $(wildcard src/*.cpp src/network/*.cpp src/command/*.cpp)
 OBJS = $(SRCS:.cpp=.o)
-EXEC =  PmergeMe
 
-ANSI_RESET   = \x1b[0m
-ANSI_RED     = \x1b[31m
-ANSI_GREEN   = \x1b[32m
-ANSI_YELLOW  = \x1b[33m
-ANSI_BLUE    = \x1b[34m
-ANSI_MAGENTA = \x1b[35m
-ANSI_CYAN    = \033[0;96m
-ANSI_WHITE   = \x1b[37m
+CC = c++
+FLAGS = -Wall -Wextra -Werror -std=c++98
+INCLUDES = -I ./includes
+
+RM = rm -rf
 
 
-CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+.cpp.o:
+	$(CC) $(FLAGS) $(INCLUDES) -c $< -o $(<:.cpp=.o)
 
-all: $(EXEC)
-	@echo "$(ANSI_GREEN)Compilation terminée avec succès!$(ANSI_RESET)"
+all: $(NAME)
 
-$(EXEC): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(EXEC)
-	@sleep 0.5
-	@echo "$(ANSI_BLUE)Linking terminé!$(ANSI_RESET)"
-
-%.o: %.cpp $(HPP)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-	@sleep 0.5
-	@echo "$(ANSI_CYAN)Compilation de $< terminée.$(ANSI_RESET)"
+$(NAME): $(OBJS)
+	@echo "\n"
+	@echo "\033[0;32mCompiling IRC server..."
+	@$(CC) $(FLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
+	@echo "Done!\033[0m"
 
 clean:
-	rm -f $(OBJS)
-	@sleep 0.5
-	@echo "$(ANSI_RED)Fichiers objets supprimés.$(ANSI_RESET)"
+	@echo "\033[0;31mMake clean..."
+	@$(RM) $(OBJS)
 
 fclean: clean
-	rm -f $(EXEC)
-	@sleep 0.5
-	@echo "$(ANSI_RED)Exécutable supprimé.$(ANSI_RESET)"
+	@echo "\033[0;31mMake fclean..."
+	@$(RM) $(NAME)
 
 re: fclean all
+
+.PHONY: all clean, fclean, re
